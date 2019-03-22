@@ -89,13 +89,76 @@ join payment as p
 on c.customer_id = p.customer_id
 group by c.last_name;
 
-select * from film;
-select * from language;
-
 select title as "Title"
 from film
-where (title like "k%" or title like "q%") and language_id = (
+where (title like "k%" or title like "q%") and language_id in (
 	select language_id
     from language
     where name = "English"
 );
+
+select first_name as "First Name", last_name as "Last Name"
+from actor
+where actor_id in (
+	select actor_id
+	from film_actor
+	where film_id in (
+		select film_id
+		from film
+		where title = "Alone Trip"
+	)
+);
+
+select cu.first_name as "First Name", cu.last_name as "Last Name", cu.email as "Email"
+from customer as cu
+join address as a
+on cu.address_id = a.address_id
+join city as ci
+on a.city_id = ci.city_id
+join country as co
+on ci.country_id = co.country_id
+where co.country = "Canada";
+
+select f.title as "Title"
+from film as f
+where film_id in (
+	select fc.film_id
+    from film_category as fc
+    where category_id in (
+		select c.category_id
+        from category as c
+        where c.name = "Family"
+    )
+);
+
+select f.title, count(f.title)
+from film as f
+join inventory as i
+on f.film_id = i.film_id
+join rental as r
+on i.inventory_id = r.inventory_id
+group by title
+order by count(f.title) desc;
+
+select sto.store_id as "Store ID", sum(p.amount) as "Total income"
+from store as sto
+join staff as sta
+on sto.store_id = sta.store_id
+join payment as p
+on sta.staff_id = p.staff_id
+group by sto.store_id;
+
+select * from store;
+select * from address;
+select * from city;
+select * from country;
+
+select s.store_id as "Store ID", ci.city as "City", co.country as "Country"
+from store as s
+join address as a
+on s.address_id = a.address_id
+join city as ci
+on a.city_id = ci.city_id
+join country as co
+on ci.country_id = co.country_id;
+
