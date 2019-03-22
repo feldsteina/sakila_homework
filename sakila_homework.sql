@@ -148,11 +148,6 @@ join payment as p
 on sta.staff_id = p.staff_id
 group by sto.store_id;
 
-select * from store;
-select * from address;
-select * from city;
-select * from country;
-
 select s.store_id as "Store ID", ci.city as "City", co.country as "Country"
 from store as s
 join address as a
@@ -162,3 +157,35 @@ on a.city_id = ci.city_id
 join country as co
 on ci.country_id = co.country_id;
 
+select c.name as "Genre", sum(p.amount) as "Gross revenue"
+from category as c
+join film_category as fc
+on c.category_id = fc.category_id
+join inventory as i
+on fc.film_id = i.film_id
+join rental as r
+on i.inventory_id = r.inventory_id
+join payment as p
+on r.rental_id = p.rental_id
+group by c.name
+order by sum(p.amount) desc
+limit 5;
+
+create view top_five_genres as
+select c.name as "Genre", sum(p.amount) as "Gross revenue"
+from category as c
+join film_category as fc
+on c.category_id = fc.category_id
+join inventory as i
+on fc.film_id = i.film_id
+join rental as r
+on i.inventory_id = r.inventory_id
+join payment as p
+on r.rental_id = p.rental_id
+group by c.name
+order by sum(p.amount) desc
+limit 5;
+
+select * from top_five_genres;
+
+drop view top_five_genres;
